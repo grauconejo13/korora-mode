@@ -128,7 +128,7 @@ export default function App() {
         <img
           src="https://assets.codepen.io/11990995/Koror%C4%81-Mode-logo.png"
           alt="Kororā Mode"
-          className="w-40"
+          className="w-3/4 max-w-lg"
         />
       </div>
     );
