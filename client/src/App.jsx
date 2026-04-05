@@ -22,6 +22,7 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [view, setView] = useState("scan");
+  const [loading, setLoading] = useState(true);
 
   const formatCategory = (cat) => {
     if (cat === "Aves") return "Bird";
@@ -31,6 +32,14 @@ export default function App() {
     if (cat === "Arachnida") return "Arachnid";
     return cat || "Unknown";
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const loadSightings = async () => {
@@ -53,7 +62,6 @@ export default function App() {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
 
-        // immediate UI updates
         setLocation({ lat, lng });
         setError(null);
         setSpecies("Checking nearby wildlife...");
@@ -62,7 +70,6 @@ export default function App() {
         setRisk(null);
         setCategory(null);
 
-        // get readable place
         const placeName = await getLocationName(lat, lng);
         setPlace(placeName);
 
@@ -76,8 +83,6 @@ export default function App() {
 
             if (photoUrl) {
               setImage(photoUrl.replace("square", "medium"));
-            } else {
-              setImage(null);
             }
 
             const detectedSpecies =
@@ -116,6 +121,20 @@ export default function App() {
     );
   };
 
+  //SPLASH SCREEN
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-slate-900">
+        <img
+          src="https://assets.codepen.io/11990995/Koror%C4%81-Mode-logo.png"
+          alt="Kororā Mode"
+          className="w-40"
+        />
+      </div>
+    );
+  }
+
+  //Main App
   return (
     <div className="min-h-screen bg-slate-900 text-white flex justify-center px-4">
       <div className="w-full max-w-xl py-6">
@@ -128,7 +147,6 @@ export default function App() {
 
         {view === "scan" && (
           <>
-            {/* Check button */}
             <button
               onClick={handleCheck}
               className="bg-blue-500 px-4 py-2 rounded-xl"
@@ -136,16 +154,13 @@ export default function App() {
               Check Nearby Wildlife
             </button>
 
-            {/* Location */}
             {location && (
-              <div className="mt-4 text-sm text-gray-400">
-                <p className="mt-2 text-sm text-gray-400">
-                  📍 {place} • {Math.abs(location.lat).toFixed(1)}°{" "}
-                  {location.lat >= 0 ? "N" : "S"},{" "}
-                  {Math.abs(location.lng).toFixed(1)}°{" "}
-                  {location.lng >= 0 ? "E" : "W"}
-                </p>
-              </div>
+              <p className="mt-2 text-sm text-gray-400">
+                📍 {place} • {Math.abs(location.lat).toFixed(1)}°{" "}
+                {location.lat >= 0 ? "N" : "S"},{" "}
+                {Math.abs(location.lng).toFixed(1)}°{" "}
+                {location.lng >= 0 ? "E" : "W"}
+              </p>
             )}
 
             <div className="mt-6 space-y-3">
@@ -153,15 +168,14 @@ export default function App() {
                 <img
                   src={image}
                   alt={species}
-                  className="w-full h-48 object-cover rounded-xl mb-2"
+                  className="w-full h-48 object-cover rounded-xl"
                 />
               )}
-              {/* Species */}
+
               {species && (
-                <div className="w-full bg-slate-800 p-4 rounded-xl">
+                <div className="bg-slate-800 p-4 rounded-xl">
                   <p className="text-sm text-gray-400">Detected Species</p>
                   <p className="text-lg font-semibold">{species}</p>
-
                   {category && (
                     <p className="text-sm text-gray-400 mt-1">
                       Type: {category}
@@ -171,12 +185,10 @@ export default function App() {
               )}
             </div>
 
-            {/* Risk */}
             <RiskCard risk={risk} className="mt-4" />
 
-            {/* AI Advisory */}
             {advisory && (
-              <div className="mt-4 w-full bg-blue-500/20 p-4 rounded-xl">
+              <div className="mt-4 bg-blue-500/20 p-4 rounded-xl">
                 <p className="font-semibold">🧠 AI Guidance</p>
                 <pre className="text-sm mt-2 whitespace-pre-wrap font-sans">
                   {advisory}
@@ -186,51 +198,18 @@ export default function App() {
           </>
         )}
 
-        {/* Feed */}
-        {view === "activity" && (
-          <>
-            <SightingList sightings={sightings} />
-          </>
-        )}
+        {view === "activity" && <SightingList sightings={sightings} />}
 
-        {/* Error */}
         {error && <p className="mt-4 text-red-400 text-sm">{error}</p>}
 
         {showInfo && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-slate-800 p-6 rounded-xl w-full max-w-md">
-              <button className="mb-4" onClick={() => setShowInfo(false)}>
-                ✕
-              </button>
-
+              <button onClick={() => setShowInfo(false)}>✕</button>
               <h2 className="text-lg font-semibold mb-2">🐧 What is Kororā?</h2>
-
-              <p className="text-sm text-gray-300 mb-3">
+              <p className="text-sm text-gray-300">
                 Inspired by the little penguin—small, observant, and impossible
                 to miss.
-              </p>
-
-              <p className="text-sm text-gray-300 mb-3">
-                Kororā (the Māori name for the little penguin) represents
-                awareness—the ability to quietly observe and understand your
-                surroundings.
-              </p>
-
-              <p className="text-sm text-gray-300 mb-3">
-                Kororā Mode helps you notice what’s around you, understand
-                potential risks, and stay one step ahead.
-              </p>
-
-              <p className="text-sm text-gray-300">This app helps you:</p>
-
-              <ul className="text-sm text-gray-300 mt-2 space-y-1">
-                <li>• Identify nearby wildlife</li>
-                <li>• Understand potential risk levels</li>
-                <li>• See activity reported by nearby users</li>
-              </ul>
-
-              <p className="text-sm text-gray-400 mt-4">
-                Stay aware. Stay curious.
               </p>
             </div>
           </div>
@@ -239,13 +218,9 @@ export default function App() {
         {showModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-slate-800 p-6 rounded-xl w-full max-w-md">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="font-semibold">📝 Report Nearby Activity</h2>
-                <button onClick={() => setShowModal(false)}>✕</button>
-              </div>
+              <button onClick={() => setShowModal(false)}>✕</button>
 
               <SightingForm
-                species={species}
                 location={location}
                 onAdd={(newSighting) => {
                   addSighting(setSightings, newSighting);
