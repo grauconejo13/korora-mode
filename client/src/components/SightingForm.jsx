@@ -2,29 +2,42 @@ import { useState } from "react";
 
 export default function SightingForm({ onAdd, species, location }) {
   const [note, setNote] = useState("");
+  const [username, setUsername] = useState("");
 
   const handleSubmit = () => {
-    if (!species) return;
+    if (!species || !note || !username) return;
 
     const newSighting = {
       id: Date.now(),
       species,
       note,
+      username,
       lat: location?.lat,
       lng: location?.lng,
       timestamp: new Date().toISOString(),
     };
 
     onAdd(newSighting);
+
     setNote("");
+    setUsername("");
   };
 
   return (
-    <div className="mt-4 w-full max-w-md">
+    <div className="mt-6 w-full max-w-md bg-slate-800 p-4 rounded-xl">
+      <p className="font-semibold mb-2">📝 Report a Sighting</p>
+
       <input
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Username"
+        className="w-full p-2 rounded text-black mb-2"
+      />
+
+      <textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        placeholder="What did you observe?"
+        placeholder="Describe what you saw..."
         className="w-full p-2 rounded text-black"
       />
 
