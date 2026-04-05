@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { fetchWildlife } from "./services/wildlifeApi";
 import { getAIAdvice } from "./services/aiService";
 import { addSighting } from "./services/sightingsService";
@@ -31,6 +31,16 @@ export default function App() {
     if (cat === "Arachnida") return "Arachnid";
     return cat || "Unknown";
   };
+
+  useEffect(() => {
+    const loadSightings = async () => {
+      const res = await fetch("https://your-api-url/api/sightings");
+      const data = await res.json();
+      setSightings(data);
+    };
+
+    loadSightings();
+  }, []);
 
   const handleCheck = () => {
     if (!navigator.geolocation) {
@@ -196,8 +206,19 @@ export default function App() {
               <h2 className="text-lg font-semibold mb-2">🐧 What is Kororā?</h2>
 
               <p className="text-sm text-gray-300 mb-3">
-                Kororā represents awareness—the ability to quietly observe and
-                understand your surroundings.
+                Inspired by the little penguin—small, observant, and impossible
+                to miss.
+              </p>
+
+              <p className="text-sm text-gray-300 mb-3">
+                Kororā (the Māori name for the little penguin) represents
+                awareness—the ability to quietly observe and understand your
+                surroundings.
+              </p>
+
+              <p className="text-sm text-gray-300 mb-3">
+                Kororā Mode helps you notice what’s around you, understand
+                potential risks, and stay one step ahead.
               </p>
 
               <p className="text-sm text-gray-300">This app helps you:</p>
@@ -214,6 +235,7 @@ export default function App() {
             </div>
           </div>
         )}
+
         {showModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-slate-800 p-6 rounded-xl w-full max-w-md">
