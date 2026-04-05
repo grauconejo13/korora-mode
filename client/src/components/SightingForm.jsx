@@ -25,8 +25,6 @@ export default function SightingForm({ onAdd, species, location }) {
 
   return (
     <div className="mt-6 w-full max-w-md bg-slate-800 p-4 rounded-xl">
-      <p className="font-semibold mb-2">📝 Report a Sighting</p>
-
       <input
         value={username}
         onChange={(e) => setUsername(e.target.value)}
@@ -37,7 +35,7 @@ export default function SightingForm({ onAdd, species, location }) {
       <textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        placeholder="Describe what you saw..."
+        placeholder="What’s happening nearby? (e.g. coyote near trail, aggressive dog, etc.)"
         className="w-full p-2 rounded text-black"
       />
 

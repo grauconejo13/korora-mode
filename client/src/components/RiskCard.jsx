@@ -11,7 +11,7 @@ export default function RiskCard({ risk }) {
           : "text-green-400";
 
   return (
-    <div className="mt-4 w-full max-w-md bg-slate-800 p-4 rounded-xl">
+    <div className="mt-4 w-full bg-blue-500/20 p-4 rounded-xl">
       <p className={`font-bold ${color}`}>⚠️ Risk: {risk}</p>
     </div>
   );
