@@ -4,23 +4,36 @@ export default function SightingForm({ onAdd, species, location }) {
   const [note, setNote] = useState("");
   const [username, setUsername] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!species || !note || !username) return;
 
     const newSighting = {
-      id: Date.now(),
       species,
       note,
       username,
       lat: location?.lat,
       lng: location?.lng,
-      timestamp: new Date().toISOString(),
     };
 
-    onAdd(newSighting);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/sightings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newSighting),
+      });
 
-    setNote("");
-    setUsername("");
+      const saved = await res.json();
+
+      // update UI with backend response
+      onAdd(saved);
+
+      setNote("");
+      setUsername();
+    } catch (err) {
+      console.error("Failed to save sighting", err);
+    }
   };
 
   return (

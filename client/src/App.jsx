@@ -34,7 +34,7 @@ export default function App() {
 
   useEffect(() => {
     const loadSightings = async () => {
-      const res = await fetch("https://your-api-url/api/sightings");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/sightings`);
       const data = await res.json();
       setSightings(data);
     };
